@@ -1,6 +1,7 @@
-import { RocketsLocationsData } from "@/types/rockets/RocketsData.interface";
 import axios from "axios";
 import { RocketsDataEndpoint } from "./endpoints";
+import { deserializeData } from "@/lib/rocketsUtils/dataTransfomers";
+import { RocketResponse } from "@/types/rockets/RocketsResponse.interface";
 
 const server = process.env.NEXT_PUBLIC_SERVER;
 const client = axios.create({
@@ -10,8 +11,8 @@ const client = axios.create({
 export const getRocketsData = () => {
   try {
     return client
-      .get<RocketsTimestampsData>(`${RocketsDataEndpoint}`)
-      .then((res) => res.data.reverse());
+      .get<RocketResponse[]>(`${RocketsDataEndpoint}`)
+      .then((res) => deserializeData(res.data.reverse()));
   } catch (e) {
     console.error("Cant connect", e);
     return null;

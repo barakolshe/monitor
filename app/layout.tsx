@@ -19,7 +19,7 @@ export default function RootLayout({
         <Providers>
           <main className="min-h-[inherit] w-full flex flex-col gap-6">
             <Topbar />
-            {children}
+            <div className="container flex-grow">{children}</div>
           </main>
         </Providers>
       </body>

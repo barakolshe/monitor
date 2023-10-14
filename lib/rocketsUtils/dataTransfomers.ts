@@ -1,10 +1,20 @@
 import { RocketsLocationsData } from "@/types/rockets/RocketsData.interface";
 import { RocketsFilter } from "@/types/rockets/RocketsFilter.interface";
-import { formatDate, getBegginingOfDay, getEndOfDay } from "../timeUtils";
+import { getBegginingOfDay, getDatetime, getEndOfDay } from "../timeUtils";
+import { TimeRecord } from "@/types/rockets/TimeRecord.interface";
+import { Rocket } from "@/types/rockets/Rocket.interface";
+import { RocketResponse } from "@/types/rockets/RocketsResponse.interface";
 
-export const transformRocketsData = (
-  rocketsResponse: RocketsTimestampsData
-) => {
+export const deserializeData = (data: RocketResponse[]) => {
+  return data.map<Rocket>((drop) => ({
+    ...drop,
+    time: undefined,
+    date: undefined,
+    timestamp: getDatetime(drop.date, drop.time),
+  }));
+};
+
+export const getLocationData = (rocketsResponse: Rocket[]) => {
   const rockets: RocketsLocationsData = {};
   for (const { area, location } of rocketsResponse) {
     if (!(area in rockets)) {
@@ -22,7 +32,7 @@ export const transformRocketsData = (
   return rockets;
 };
 
-export const getRocketsFilter = (rocketsResponse: RocketsTimestampsData) => {
+export const getRocketsFilter = (rocketsResponse: Rocket[]) => {
   const filter: RocketsFilter = {};
   for (const { area, location } of rocketsResponse) {
     if (!(area in filter)) {
@@ -53,22 +63,13 @@ const getActiveLocations = (filter: RocketsFilter) => {
   return locations;
 };
 
-export const getFilteredDrops = (
-  filter: RocketsFilter,
-  data: RocketsTimestampsData
-) => {
+export const getFilteredDrops = (filter: RocketsFilter, data: Rocket[]) => {
   const activeLocations = getActiveLocations(filter);
-  const hourlyRecords: TimeRecords = [];
+  const hourlyRecords: Rocket[] = [];
 
   for (const drop of data) {
     if (activeLocations.includes(drop.location)) {
-      const formattedDate = new Date(
-        Date.parse(formatDate(drop.date, drop.time))
-      );
-      hourlyRecords.push({
-        timestamp: formattedDate,
-        location: drop.location,
-      });
+      hourlyRecords.push(drop);
     }
   }
 
@@ -76,23 +77,27 @@ export const getFilteredDrops = (
 };
 
 // Gap in minutes
-export const divideHours = (drops: TimeRecords, gap: number = 60) => {
-  const result: TimeRecords = [];
+export const divideHours = (drops: Rocket[], gap: number = 60) => {
+  const result: TimeRecord[] = [];
 
   let currDate = getBegginingOfDay();
   let endOfDay = getEndOfDay();
 
-  while (currDate !== endOfDay)
+  while (currDate < endOfDay) {
+    const currDrops = [];
+    result.push();
+    const nextDate = new Date(currDate.getTime() + gap * 60000);
     for (const drop of drops) {
-      const nextDate = new Date(currDate.getTime() + gap * 60000);
       if (drop.timestamp > currDate && drop.timestamp < nextDate) {
-        result.push({
-          timestamp: currDate,
-          location: drop.location,
-        });
+        currDrops.push(drop);
       }
-      currDate = nextDate;
     }
+    result.push({
+      timestamp: currDate,
+      drops: currDrops,
+    });
+    currDate = nextDate;
+  }
 
   return result;
 };

@@ -4,6 +4,7 @@ import { Separator } from "@/components/ui/Separator/Separator";
 import React, { FunctionComponent } from "react";
 import { domainToASCII } from "url";
 import FiltersDialog from "./_FiltersDialog/FiltersDialog";
+import { RocketsLocationsData } from "@/types/rockets/RocketsData.interface";
 
 interface FiltersProps {}
 
@@ -13,8 +14,6 @@ const Filters: FunctionComponent<FiltersProps> = () => {
   const openDialog = () => {
     setDialogState(true);
   };
-
-  console.log({ dialogState });
 
   return (
     <>

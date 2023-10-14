@@ -2,9 +2,7 @@
 import { Button } from "@/components/ui/Button/Button";
 import { Separator } from "@/components/ui/Separator/Separator";
 import React, { FunctionComponent } from "react";
-import { domainToASCII } from "url";
 import FiltersDialog from "./_FiltersDialog/FiltersDialog";
-import { RocketsLocationsData } from "@/types/rockets/RocketsData.interface";
 
 interface FiltersProps {}
 

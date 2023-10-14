@@ -6,11 +6,10 @@ import React from "react";
 import { FilterContext } from "@/context/FilterContext";
 import { RocketsFilter } from "@/types/rockets/RocketsFilter.interface";
 import {
-  divideHours,
   getFilteredDrops,
   getRocketsFilter,
 } from "@/lib/rocketsUtils/dataTransfomers";
-import { BarChart } from "@tremor/react";
+// import { BarChart } from "@tremor/react";
 
 export default function Home() {
   const { isLoading, isError, data } = useQuery(["rocketsQuery"], () =>
@@ -35,7 +34,7 @@ export default function Home() {
     }
   }, [data, rocketsFilter]);
 
-  divideHours(filteredDrops ? filteredDrops : []);
+  // divideHours(filteredDrops ? filteredDrops : []);
 
   return (
     <FilterContext.Provider
@@ -46,7 +45,7 @@ export default function Home() {
     >
       <div className="flex-grow flex flex-col gap-8">
         <Filters />
-        <BarChart data={[]} index="time" categories={["amount"]} />
+        {/* <BarChart data={[]} index="time" categories={["amount"]} /> */}
       </div>
     </FilterContext.Provider>
   );

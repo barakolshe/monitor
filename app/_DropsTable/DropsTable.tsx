@@ -1,69 +1,104 @@
-// import {  FunctionComponent } from "react"
-// import {
-//     DataTable,
-//     TableBody,
-//     TableCell,
-//     TableHead,
-//     TableHeader,
-//     TableRow,
-//   } from "@/components/shared/DataTable/DataTable"
+import { Button } from "@/components/ui/Button/Button";
+import { FunctionComponent } from "react";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import DataTable from "@/components/shared/DataTable/DataTable";
+import { Rocket } from "@/types/rockets/Rocket.interface";
+import { ColumnDef, Row } from "@tanstack/react-table";
+import { getDate, getTime } from "@/lib/timeUtils";
 
-// interface DropsTableProps {
+interface DropsTableProps {
+  data: Rocket[];
+}
 
-// }
+const DropsTable: FunctionComponent<DropsTableProps> = ({ data }) => {
+  const columns: ColumnDef<Rocket>[] = [
+    {
+      accessorKey: "time",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Time
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="lowercase">{getTime(row.getValue("timestamp"))}</div>
+      ),
+    },
+    {
+      accessorKey: "date",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Date
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="lowercase">{getDate(row.getValue("date"))}</div>
+      ),
+    },
+    {
+      accessorKey: "area",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Area
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="lowercase">{row.getValue("area")}</div>
+      ),
+    },
+    {
+      accessorKey: "location",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Location
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="lowercase">{row.getValue("location")}</div>
+      ),
+    },
+    {
+      accessorKey: "title",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Title
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="lowercase">{row.getValue("title")}</div>
+      ),
+    },
+  ];
+  return <DataTable columns={columns} data={data}></DataTable>;
+};
 
-// const DropsTable: FunctionComponent<DropsTableProps> = () => {
-//     return const table = useReactTable({
-//         data,
-//         columns,
-//         getCoreRowModel: getCoreRowModel(),
-//       })
-
-//       return (
-//         <div className="rounded-md border">
-//           <Table>
-//             <TableHeader>
-//               {table.getHeaderGroups().map((headerGroup) => (
-//                 <TableRow key={headerGroup.id}>
-//                   {headerGroup.headers.map((header) => {
-//                     return (
-//                       <TableHead key={header.id}>
-//                         {header.isPlaceholder
-//                           ? null
-//                           : flexRender(
-//                               header.column.columnDef.header,
-//                               header.getContext()
-//                             )}
-//                       </TableHead>
-//                     )
-//                   })}
-//                 </TableRow>
-//               ))}
-//             </TableHeader>
-//             <TableBody>
-//               {table.getRowModel().rows?.length ? (
-//                 table.getRowModel().rows.map((row) => (
-//                   <TableRow
-//                     key={row.id}
-//                     data-state={row.getIsSelected() && "selected"}
-//                   >
-//                     {row.getVisibleCells().map((cell) => (
-//                       <TableCell key={cell.id}>
-//                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
-//                       </TableCell>
-//                     ))}
-//                   </TableRow>
-//                 ))
-//               ) : (
-//                 <TableRow>
-//                   <TableCell colSpan={columns.length} className="h-24 text-center">
-//                     No results.
-//                   </TableCell>
-//                 </TableRow>
-//               )}
-//             </TableBody>
-//           </Table>
-//         </div>;
-// }
-
-// export default DropsTable;
+export default DropsTable;

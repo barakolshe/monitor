@@ -14,17 +14,18 @@ import { BarChart } from "@tremor/react";
 import { Rocket } from "@/types/rockets/Rocket.interface";
 import { DropGraphData } from "@/types/rockets/DropGraphData.interface";
 import { getGraphFormat } from "@/lib/timeUtils";
+import DropsTable from "./_DropsTable/DropsTable";
 
 export default function Home() {
   const { isLoading, isError, data } = useQuery(["rocketsQuery"], () =>
     getRocketsData()
   );
-
   const [rocketsFilter, setRocketsFilter] =
     React.useState<RocketsFilter | null>(null);
   const [filteredDrops, setFilteredDrops] = React.useState<Rocket[] | null>(
     null
   );
+  const [selectedBar, setSelectedBar] = React.useState();
 
   React.useEffect(() => {
     if (data && rocketsFilter === null) {
@@ -39,12 +40,13 @@ export default function Home() {
   }, [data, rocketsFilter]);
 
   const getGraphData = () => {
+    console.log({ filteredDrops });
     const dividedDrops = divideHours(filteredDrops ? filteredDrops : []);
+    console.log({ dividedDrops });
     const graphData = dividedDrops.map<DropGraphData>((timeFrame) => ({
       time: getGraphFormat(timeFrame.timestamp),
       drops: timeFrame.drops.length,
     }));
-
     console.log({ graphData });
 
     return graphData;
@@ -65,6 +67,7 @@ export default function Home() {
           index="time"
           categories={["drops"]}
         />
+        <DropsTable data={[]} />
       </div>
     </FilterContext.Provider>
   );

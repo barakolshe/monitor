@@ -78,6 +78,7 @@ const CheckboxAccordion: FunctionComponent<CheckboxAccordionProps> = ({
       for (const item in checked[topic]) {
         checkboxes.push(
           <LabeledCheckbox
+            key={`${topic}_${item}`}
             id={`${topic}_${item}`}
             label={item}
             checked={
@@ -90,7 +91,7 @@ const CheckboxAccordion: FunctionComponent<CheckboxAccordionProps> = ({
         );
       }
       accrodionItems.push(
-        <AccordionItem value={topic}>
+        <AccordionItem key={topic} value={topic}>
           <AccordionTrigger className="flex">
             <div className="flex flex-row justify-between align-middle flex-grow">
               {topic}

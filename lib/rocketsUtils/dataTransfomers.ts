@@ -6,12 +6,14 @@ import { Rocket } from "@/types/rockets/Rocket.interface";
 import { RocketResponse } from "@/types/rockets/RocketsResponse.interface";
 
 export const deserializeData = (data: RocketResponse[]) => {
-  return data.map<Rocket>((drop) => ({
-    ...drop,
-    time: undefined,
-    date: undefined,
-    timestamp: getDatetime(drop.date, drop.time),
-  }));
+  return data.map<Rocket>((drop) => {
+    return {
+      area: drop.area,
+      location: drop.location,
+      title: drop.title,
+      timestamp: getDatetime(drop.date, drop.time),
+    };
+  });
 };
 
 export const getLocationData = (rocketsResponse: Rocket[]) => {
@@ -49,7 +51,7 @@ export const getRocketsFilter = (rocketsResponse: Rocket[]) => {
   return filter;
 };
 
-const getActiveLocations = (filter: RocketsFilter) => {
+const getFilteredLocations = (filter: RocketsFilter) => {
   const locations: string[] = [];
 
   for (const [_, area] of Object.entries(filter)) {
@@ -64,16 +66,16 @@ const getActiveLocations = (filter: RocketsFilter) => {
 };
 
 export const getFilteredDrops = (filter: RocketsFilter, data: Rocket[]) => {
-  const activeLocations = getActiveLocations(filter);
-  const hourlyRecords: Rocket[] = [];
+  const filteredLocations = getFilteredLocations(filter);
+  const filteredDrops: Rocket[] = [];
 
   for (const drop of data) {
-    if (activeLocations.includes(drop.location)) {
-      hourlyRecords.push(drop);
+    if (filteredLocations.includes(drop.location)) {
+      filteredDrops.push(drop);
     }
   }
 
-  return hourlyRecords;
+  return filteredDrops;
 };
 
 // Gap in minutes

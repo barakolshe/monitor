@@ -56,7 +56,7 @@ const CheckboxAccordion: FunctionComponent<CheckboxAccordionProps> = ({
 
   const changeCheckboxTopic = (
     topic: string,
-    e: React.MouseEvent<HTMLButtonElement>
+    e: React.MouseEvent<HTMLDivElement>
   ) => {
     e.stopPropagation(); // stopping the click to propagrate to the accordion
     const desiredState =
@@ -93,12 +93,14 @@ const CheckboxAccordion: FunctionComponent<CheckboxAccordionProps> = ({
       accrodionItems.push(
         <AccordionItem key={topic} value={topic}>
           <AccordionTrigger className="flex">
-            <div className="flex flex-row justify-between align-middle flex-grow">
+            <div
+              className="flex flex-row justify-between align-middle flex-grow py-4"
+              onClick={(e) => changeCheckboxTopic(topic, e)}
+            >
               {topic}
               <Checkbox
                 className="mr-4 my-auto"
                 checked={getTopicState(topic)}
-                onClick={(e) => changeCheckboxTopic(topic, e)}
                 id={topic}
               />
             </div>

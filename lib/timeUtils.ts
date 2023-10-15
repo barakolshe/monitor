@@ -32,11 +32,14 @@ export const getGraphFormat = (timestamp: Date) => {
 };
 
 export const getTime = (timestamp: Date) => {
+  console.log({ timestamp });
   return `${padTimePortion(timestamp.getHours())}:${padTimePortion(
     timestamp.getMinutes()
   )}:${padTimePortion(timestamp.getSeconds())}`;
 };
 
 export const getDate = (timestamp: Date) => {
-  return `${timestamp.getFullYear()} ${timestamp.getMonth()} ${timestamp.getDay()}`;
+  return `${padTimePortion(timestamp.getFullYear())}/${padTimePortion(
+    timestamp.getMonth()
+  )}/${padTimePortion(timestamp.getDay())}`;
 };

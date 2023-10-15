@@ -5,15 +5,19 @@ import DataTable from "@/components/shared/DataTable/DataTable";
 import { Rocket } from "@/types/rockets/Rocket.interface";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { getDate, getTime } from "@/lib/timeUtils";
+import CellContainer from "./CellContainer/CellContainer";
 
 interface DropsTableProps {
   data: Rocket[];
 }
 
 const DropsTable: FunctionComponent<DropsTableProps> = ({ data }) => {
+  console.log({ data });
+
   const columns: ColumnDef<Rocket>[] = [
     {
-      accessorKey: "time",
+      id: "time",
+      accessorFn: (originalRow) => getTime(originalRow.timestamp),
       header: ({ column }) => {
         return (
           <Button
@@ -25,12 +29,13 @@ const DropsTable: FunctionComponent<DropsTableProps> = ({ data }) => {
           </Button>
         );
       },
-      cell: ({ row }) => (
-        <div className="lowercase">{getTime(row.getValue("timestamp"))}</div>
-      ),
+      cell: ({ row }) => {
+        return <CellContainer>{row.getValue("time")}</CellContainer>;
+      },
     },
     {
-      accessorKey: "date",
+      id: "date",
+      accessorFn: (originalRow) => getDate(originalRow.timestamp),
       header: ({ column }) => {
         return (
           <Button
@@ -42,15 +47,15 @@ const DropsTable: FunctionComponent<DropsTableProps> = ({ data }) => {
           </Button>
         );
       },
-      cell: ({ row }) => (
-        <div className="lowercase">{getDate(row.getValue("date"))}</div>
-      ),
+      cell: ({ row }) => <CellContainer>{row.getValue("date")}</CellContainer>,
     },
     {
+      id: "area",
       accessorKey: "area",
       header: ({ column }) => {
         return (
           <Button
+            className="justify-center"
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
@@ -59,11 +64,10 @@ const DropsTable: FunctionComponent<DropsTableProps> = ({ data }) => {
           </Button>
         );
       },
-      cell: ({ row }) => (
-        <div className="lowercase">{row.getValue("area")}</div>
-      ),
+      cell: ({ row }) => <CellContainer>{row.getValue("area")}</CellContainer>,
     },
     {
+      id: "location",
       accessorKey: "location",
       header: ({ column }) => {
         return (
@@ -77,10 +81,11 @@ const DropsTable: FunctionComponent<DropsTableProps> = ({ data }) => {
         );
       },
       cell: ({ row }) => (
-        <div className="lowercase">{row.getValue("location")}</div>
+        <CellContainer>{row.getValue("location")}</CellContainer>
       ),
     },
     {
+      id: "title",
       accessorKey: "title",
       header: ({ column }) => {
         return (
@@ -93,9 +98,7 @@ const DropsTable: FunctionComponent<DropsTableProps> = ({ data }) => {
           </Button>
         );
       },
-      cell: ({ row }) => (
-        <div className="lowercase">{row.getValue("title")}</div>
-      ),
+      cell: ({ row }) => <CellContainer>{row.getValue("title")}</CellContainer>,
     },
   ];
   return <DataTable columns={columns} data={data}></DataTable>;

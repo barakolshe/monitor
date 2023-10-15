@@ -15,6 +15,7 @@ import { Rocket } from "@/types/rockets/Rocket.interface";
 import { DropGraphData } from "@/types/rockets/DropGraphData.interface";
 import { getGraphFormat } from "@/lib/timeUtils";
 import DropsTable from "./_DropsTable/DropsTable";
+import { TimeRecord } from "@/types/rockets/TimeRecord.interface";
 
 export default function Home() {
   const { isLoading, isError, data } = useQuery(["rocketsQuery"], () =>
@@ -25,31 +26,48 @@ export default function Home() {
   const [filteredDrops, setFilteredDrops] = React.useState<Rocket[] | null>(
     null
   );
-  const [selectedBar, setSelectedBar] = React.useState();
+  const [timeGroupedDrops, setTimeGroupsDrops] = React.useState<
+    TimeRecord[] | null
+  >(null);
+  const [selectedBar, setSelectedBar] = React.useState<Date | null>(null);
 
   React.useEffect(() => {
     if (data && rocketsFilter === null) {
       setRocketsFilter(getRocketsFilter(data));
     }
-  }, [data, rocketsFilter]);
-
-  React.useEffect(() => {
-    if (rocketsFilter !== null && data) {
+    if (data && rocketsFilter !== null) {
       setFilteredDrops(getFilteredDrops(rocketsFilter, data));
     }
   }, [data, rocketsFilter]);
 
+  React.useEffect(() => {
+    setTimeGroupsDrops(divideHours(filteredDrops ? filteredDrops : []));
+  }, [filteredDrops]);
+
   const getGraphData = () => {
-    console.log({ filteredDrops });
-    const dividedDrops = divideHours(filteredDrops ? filteredDrops : []);
-    console.log({ dividedDrops });
-    const graphData = dividedDrops.map<DropGraphData>((timeFrame) => ({
+    if (timeGroupedDrops === null) {
+      return [];
+    }
+    const graphData = timeGroupedDrops.map<DropGraphData>((timeFrame) => ({
       time: getGraphFormat(timeFrame.timestamp),
       drops: timeFrame.drops.length,
     }));
-    console.log({ graphData });
 
     return graphData;
+  };
+
+  const handleBarChange = (time: string | null) => {
+    if (time === null) {
+      setSelectedBar(null);
+      return;
+    }
+    const currDate = new Date();
+    currDate.setHours(Number(time.split(":")[0]));
+    currDate.setMinutes(Number(time.split(":")[1]));
+    currDate.setSeconds(0);
+    currDate.setMilliseconds(0);
+
+    setSelectedBar(currDate);
   };
 
   return (
@@ -59,15 +77,27 @@ export default function Home() {
         setFilter: setRocketsFilter,
       }}
     >
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-20">
         <Filters />
         <BarChart
           className="mx-[-50px]"
-          data={filteredDrops !== null ? getGraphData() : []}
+          data={timeGroupedDrops !== null ? getGraphData() : []}
           index="time"
           categories={["drops"]}
+          onValueChange={(v) => handleBarChange(v ? v.time.toString() : null)}
         />
-        <DropsTable data={[]} />
+        {selectedBar && (
+          <DropsTable
+            data={
+              selectedBar !== null
+                ? timeGroupedDrops!.find(
+                    (timeGroup) =>
+                      timeGroup.timestamp.getTime() === selectedBar.getTime()
+                  )!.drops
+                : []
+            }
+          />
+        )}
       </div>
     </FilterContext.Provider>
   );

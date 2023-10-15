@@ -16,6 +16,22 @@ const DropsTable: FunctionComponent<DropsTableProps> = ({ data }) => {
 
   const columns: ColumnDef<Rocket>[] = [
     {
+      id: "date",
+      accessorFn: (originalRow) => getDate(originalRow.timestamp),
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Date
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => <CellContainer>{row.getValue("date")}</CellContainer>,
+    },
+    {
       id: "time",
       accessorFn: (originalRow) => getTime(originalRow.timestamp),
       header: ({ column }) => {
@@ -32,22 +48,6 @@ const DropsTable: FunctionComponent<DropsTableProps> = ({ data }) => {
       cell: ({ row }) => {
         return <CellContainer>{row.getValue("time")}</CellContainer>;
       },
-    },
-    {
-      id: "date",
-      accessorFn: (originalRow) => getDate(originalRow.timestamp),
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Date
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-      cell: ({ row }) => <CellContainer>{row.getValue("date")}</CellContainer>,
     },
     {
       id: "area",

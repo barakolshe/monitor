@@ -21,6 +21,9 @@ export default function Home() {
   const { isLoading, isError, data } = useQuery(["rocketsQuery"], () =>
     getRocketsData()
   );
+
+  console.log({ data });
+
   const [rocketsFilter, setRocketsFilter] =
     React.useState<RocketsFilter | null>(null);
   const [filteredDrops, setFilteredDrops] = React.useState<Rocket[] | null>(

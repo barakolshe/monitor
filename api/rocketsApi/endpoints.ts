@@ -1,1 +1,1 @@
-export const RocketsDataEndpoint = "/data";
+export const rocketsDataEndpoint = "/db.json";

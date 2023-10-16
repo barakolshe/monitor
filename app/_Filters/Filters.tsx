@@ -82,6 +82,17 @@ const Filters: FunctionComponent<FiltersProps> = () => {
       : setPredefinedFilter(predefinedFilter);
   };
 
+  const isMoreSelected = () => {
+    const nothingFilter = {
+      title: "Nothing",
+      locations: [],
+    };
+    return (
+      !PREDEFINED_FITLERS.some((currFilter) => isFilterSelected(currFilter)) &&
+      !isFilterSelected(nothingFilter)
+    );
+  };
+
   return (
     <>
       <div className="flex flex-row-reverse justify-center items-center h-5 space-x-4">
@@ -116,7 +127,12 @@ const Filters: FunctionComponent<FiltersProps> = () => {
             );
           }
         })}
-        <Button key="More" variant="ghost" onClick={openDialog}>
+        <Button
+          key="More"
+          variant="ghost"
+          onClick={openDialog}
+          className={cn({ "bg-accent": isMoreSelected() })}
+        >
           More
         </Button>
       </div>

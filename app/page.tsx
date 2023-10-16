@@ -22,8 +22,6 @@ export default function Home() {
     getRocketsData()
   );
 
-  console.log({ data });
-
   const [rocketsFilter, setRocketsFilter] =
     React.useState<RocketsFilter | null>(null);
   const [filteredDrops, setFilteredDrops] = React.useState<Rocket[] | null>(

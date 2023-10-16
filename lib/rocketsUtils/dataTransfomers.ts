@@ -4,6 +4,7 @@ import { getBegginingOfDay, getDatetime, getEndOfDay } from "../timeUtils";
 import { TimeRecord } from "@/types/rockets/TimeRecord.interface";
 import { Rocket } from "@/types/rockets/Rocket.interface";
 import { RocketResponse } from "@/types/rockets/RocketsResponse.interface";
+import { isCompositeComponent } from "react-dom/test-utils";
 
 export const deserializeData = (data: RocketResponse[]) => {
   return data.map<Rocket>((drop) => {
@@ -35,15 +36,24 @@ export const getLocationData = (rocketsResponse: Rocket[]) => {
 };
 
 export const getRocketsFilter = (rocketsResponse: Rocket[]) => {
-  const filter: RocketsFilter = {};
+  const filter: RocketsFilter = [];
   for (const { area, location } of rocketsResponse) {
-    if (!(area in filter)) {
-      filter[area] = {};
-      filter[area][location] = false;
+    const targetArea = filter.find((currArea) => currArea.area === area);
+    if (targetArea === undefined) {
+      filter.push({
+        area: area,
+        locations: [{ location: location, active: false }],
+      });
       continue;
     }
-    if (!(location in filter[area])) {
-      filter[area][location] = false;
+    const targetLocation = targetArea.locations.find(
+      (currLocation) => currLocation.location === location
+    );
+    if (targetLocation === undefined) {
+      targetArea.locations.push({
+        location: location,
+        active: false,
+      });
       continue;
     }
   }
@@ -54,12 +64,12 @@ export const getRocketsFilter = (rocketsResponse: Rocket[]) => {
 const getFilteredLocations = (filter: RocketsFilter) => {
   const locations: string[] = [];
 
-  for (const [_, area] of Object.entries(filter)) {
-    for (const [location, isActive] of Object.entries(area)) {
-      if (isActive) {
-        locations.push(location);
-      }
-    }
+  for (const currArea of filter) {
+    locations.push(
+      ...currArea.locations
+        .filter((currLocation) => currLocation.active)
+        .map((currLocation) => currLocation.location)
+    );
   }
 
   return locations;

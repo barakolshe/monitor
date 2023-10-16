@@ -12,8 +12,6 @@ interface DropsTableProps {
 }
 
 const DropsTable: FunctionComponent<DropsTableProps> = ({ data }) => {
-  console.log({ data });
-
   const columns: ColumnDef<Rocket>[] = [
     {
       id: "date",

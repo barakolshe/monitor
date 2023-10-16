@@ -1,5 +1,7 @@
-export interface RocketsFilter {
-  [area: string]: {
-    [location: string]: boolean;
-  };
-}
+export type RocketsFilter = {
+  area: string;
+  locations: {
+    location: string;
+    active: boolean;
+  }[];
+}[];

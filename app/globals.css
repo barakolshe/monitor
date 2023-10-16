@@ -75,11 +75,19 @@
   }
 }
 
-.no-scrollbar {
+.app-no-scrollbar {
   -ms-overflow-style: none; /* Internet Explorer 10+ */
   scrollbar-width: none; /* Firefox */
 }
 
-.no-scrollbar::-webkit-scrollbar {
+.app-no-scrollbar::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
+}
+
+.app-centered {
+  font-size: "4rem";
+  /* position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); */
 }

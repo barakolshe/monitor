@@ -32,7 +32,6 @@ export const getGraphFormat = (timestamp: Date) => {
 };
 
 export const getTime = (timestamp: Date) => {
-  console.log({ timestamp });
   return `${padTimePortion(timestamp.getHours())}:${padTimePortion(
     timestamp.getMinutes()
   )}:${padTimePortion(timestamp.getSeconds())}`;

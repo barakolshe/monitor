@@ -12,101 +12,134 @@ import {
 import React, { FunctionComponent } from "react";
 import cloneDeep from "lodash.clonedeep";
 
-export interface CheckedType {
-  [topic: string]: {
-    [item: string]: boolean;
-  };
-}
+export type DataType = {
+  id: string;
+  label: string;
+  value: any;
+  checkboxes: {
+    id: string;
+    label: string;
+    value: any;
+    active: boolean;
+  }[];
+}[];
 
 interface CheckboxAccordionProps {
-  initialState: CheckedType;
-  checked: CheckedType | null;
-  setChecked: (checked: CheckedType | null) => void;
+  initialState: DataType;
+  data: DataType | null;
+  setData: (checked: DataType | null) => void;
 }
 
 const CheckboxAccordion: FunctionComponent<CheckboxAccordionProps> = ({
   initialState,
-  checked,
-  setChecked,
+  data,
+  setData,
 }) => {
-  const getTopicState = (topic: string) => {
-    let count = 0;
-    let checkedCount = 0;
-
-    for (const [_, checkboxValue] of Object.entries(checked![topic])) {
-      if (checkboxValue) {
-        checkedCount += 1;
-      }
-      count += 1;
-    }
-    if (checkedCount === 0) {
+  const isAccordionChecked = (accordionValue: any) => {
+    const targetAccordion = data?.find(
+      (currAccord) => currAccord.value == accordionValue
+    );
+    if (targetAccordion === undefined) {
+      console.error("error");
       return CheckboxState.Unchecked;
-    } else if (checkedCount !== count) {
-      return CheckboxState.SemiChecked;
+    }
+    if (
+      targetAccordion.checkboxes.some((currCheckbox) => currCheckbox.active)
+    ) {
+      if (
+        targetAccordion.checkboxes.every((currCheckbox) => currCheckbox.active)
+      ) {
+        return CheckboxState.Checked;
+      } else {
+        return CheckboxState.SemiChecked;
+      }
     } else {
-      return CheckboxState.Checked;
+      return CheckboxState.Unchecked;
     }
   };
 
-  const changeCheckboxItem = (topic: string, item: string) => {
-    const checkedCopy = cloneDeep(checked);
-    checkedCopy![topic][item] = !checkedCopy![topic][item];
-    setChecked(checkedCopy);
+  const changeCheckboxActivation = (
+    accordionValue: string,
+    checkboxValue: string
+  ) => {
+    const dataCopy = cloneDeep(data);
+    const targetAccordion = dataCopy?.find(
+      (currAccord) => currAccord.value == accordionValue
+    );
+    if (targetAccordion === undefined) {
+      return;
+    }
+    const targetCheckbox = targetAccordion?.checkboxes.find(
+      (currCheckbox) => currCheckbox.value === checkboxValue
+    );
+    if (targetCheckbox === undefined) {
+      return;
+    }
+    targetCheckbox.active = !targetCheckbox.active;
+    setData(dataCopy);
   };
 
   const changeCheckboxTopic = (
-    topic: string,
+    accordionValue: string,
     e: React.MouseEvent<HTMLDivElement>
   ) => {
     e.stopPropagation(); // stopping the click to propagrate to the accordion
     const desiredState =
-      getTopicState(topic) === CheckboxState.Unchecked ? true : false;
-    const checkedCopy = cloneDeep(checked);
-    for (let item in checkedCopy![topic]) {
-      checkedCopy![topic][item] = desiredState;
+      isAccordionChecked(accordionValue) === CheckboxState.Unchecked
+        ? true
+        : false;
+    const dataCopy = cloneDeep(data);
+    const targetAccordion = dataCopy!.find(
+      (currAccord) => currAccord.value == accordionValue
+    );
+    if (targetAccordion === undefined) {
+      return;
     }
-    setChecked(checkedCopy);
+    targetAccordion.checkboxes.forEach(
+      (currCheckbox) => (currCheckbox.active = desiredState)
+    );
+    setData(dataCopy);
   };
 
   const generateElements = () => {
-    if (checked === null) {
+    if (data === null) {
       return null;
     }
     let accrodionItems = [];
-    for (const topic in checked) {
-      let checkboxes = [];
-      for (const item in checked[topic]) {
-        checkboxes.push(
+    for (const accordion of data) {
+      let checkboxesElements = [];
+      for (const checkbox of accordion.checkboxes) {
+        checkboxesElements.push(
           <LabeledCheckbox
-            key={`${topic}_${item}`}
-            id={`${topic}_${item}`}
-            label={item}
+            key={checkbox.id}
+            id={checkbox.id}
+            label={checkbox.label}
             checked={
-              checked[topic][item]
-                ? CheckboxState.Checked
-                : CheckboxState.Unchecked
+              checkbox.active ? CheckboxState.Checked : CheckboxState.Unchecked
             }
-            onClick={() => changeCheckboxItem(topic, item)}
+            onClick={() =>
+              changeCheckboxActivation(accordion.value, checkbox.value)
+            }
           />
         );
       }
       accrodionItems.push(
-        <AccordionItem key={topic} value={topic}>
+        <AccordionItem key={accordion.id} value={accordion.value}>
           <AccordionTrigger className="flex">
             <div
               className="flex flex-row justify-between align-middle flex-grow py-4"
-              onClick={(e) => changeCheckboxTopic(topic, e)}
+              onClick={(e) => changeCheckboxTopic(accordion.value, e)}
             >
-              {topic}
+              {accordion.label}
               <Checkbox
+                id={accordion.id}
                 className="mr-4 my-auto"
-                checked={getTopicState(topic)}
-                id={topic}
+                checked={isAccordionChecked(accordion.value)}
               />
             </div>
           </AccordionTrigger>
           <AccordionContent>
-            <div className="flex flex-col gap-1">{...checkboxes}</div>
+            <div className="flex flex-col gap-1">{...checkboxesElements}</div>
           </AccordionContent>
         </AccordionItem>
       );
@@ -118,8 +151,8 @@ const CheckboxAccordion: FunctionComponent<CheckboxAccordionProps> = ({
   let items = generateElements();
 
   React.useEffect(() => {
-    setChecked(initialState);
-  }, [initialState, setChecked]);
+    setData(initialState);
+  }, [initialState, setData]);
 
   return <Accordion type="multiple">{items}</Accordion>;
 };

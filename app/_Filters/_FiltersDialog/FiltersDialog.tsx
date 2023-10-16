@@ -27,7 +27,6 @@ const FiltersDialog: FunctionComponent<FiltersDialogProps> = ({
   const [filter, setFilter] = React.useState<AccordionDataType | null>(null);
 
   const applyChanges = () => {
-    console.log(accordionDataToFilter(filter!));
     setOriginState(accordionDataToFilter(filter!));
     onOpenChange ? onOpenChange(false) : null;
   };

@@ -77,7 +77,6 @@ const Filters: FunctionComponent<FiltersProps> = () => {
   };
 
   const handleFilterClick = (predefinedFilter: PredifinedFilter) => {
-    console.log("im here", isFilterSelected(predefinedFilter));
     isFilterSelected(predefinedFilter)
       ? resetFilter()
       : setPredefinedFilter(predefinedFilter);

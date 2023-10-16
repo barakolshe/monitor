@@ -25,12 +25,6 @@ export const getDatetime = (date: string, time: string) => {
   return new Date(Date.parse(`${date.split("/").reverse().join("-")}T${time}`));
 };
 
-export const getGraphFormat = (timestamp: Date) => {
-  return `${padTimePortion(timestamp.getHours())}:${padTimePortion(
-    timestamp.getMinutes()
-  )}`;
-};
-
 export const getTime = (timestamp: Date) => {
   return `${padTimePortion(timestamp.getHours())}:${padTimePortion(
     timestamp.getMinutes()

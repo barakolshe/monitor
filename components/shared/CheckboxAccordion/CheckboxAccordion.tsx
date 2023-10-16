@@ -26,8 +26,8 @@ export type DataType = {
 
 interface CheckboxAccordionProps {
   initialState: DataType;
-  data: DataType | null;
-  setData: (checked: DataType | null) => void;
+  data: DataType;
+  setData: (checked: DataType) => void;
 }
 
 const CheckboxAccordion: FunctionComponent<CheckboxAccordionProps> = ({

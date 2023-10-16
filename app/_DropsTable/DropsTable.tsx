@@ -4,7 +4,7 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import DataTable from "@/components/shared/DataTable/DataTable";
 import { Rocket } from "@/types/rockets/Rocket.interface";
 import { ColumnDef, Row } from "@tanstack/react-table";
-import { getDate, getTime } from "@/lib/timeUtils";
+import { getDate, getTime } from "@/lib/utils/timeUtils";
 import CellContainer from "./CellContainer/CellContainer";
 
 interface DropsTableProps {
@@ -15,7 +15,7 @@ const DropsTable: FunctionComponent<DropsTableProps> = ({ data }) => {
   const columns: ColumnDef<Rocket>[] = [
     {
       id: "date",
-      accessorFn: (originalRow) => getDate(originalRow.timestamp),
+      accessorFn: (originalRow) => originalRow.timestamp.format("DD/MM/YYYY"),
       header: ({ column }) => {
         return (
           <Button
@@ -31,7 +31,7 @@ const DropsTable: FunctionComponent<DropsTableProps> = ({ data }) => {
     },
     {
       id: "time",
-      accessorFn: (originalRow) => getTime(originalRow.timestamp),
+      accessorFn: (originalRow) => originalRow.timestamp.format("HH:mm:ss"),
       header: ({ column }) => {
         return (
           <Button

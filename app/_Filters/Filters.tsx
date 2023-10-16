@@ -6,8 +6,8 @@ import FiltersDialog from "./_FiltersDialog/FiltersDialog";
 import { FilterContext } from "@/context/FilterContext";
 import { RocketsFilter } from "@/types/rockets/RocketsFilter.interface";
 import cloneDeep from "lodash.clonedeep";
-import { cn } from "@/lib/tailwindUtils";
-import { PREDEFINED_FITLERS } from "@/configs/mainConfig";
+import { cn } from "@/lib/utils/tailwindUtils";
+import { PREDEFINED_FITLERS } from "@/configs/main";
 
 interface FiltersProps {}
 

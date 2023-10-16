@@ -1,6 +1,7 @@
+import dayjs from "dayjs";
 import { Rocket } from "./Rocket.interface";
 
 export type TimeRecord = {
-  timestamp: Date;
+  timestamp: dayjs.Dayjs;
   drops: Rocket[];
 };

@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import { Loader2 } from "lucide-react";
-import { cn } from "@/lib/tailwindUtils";
+import { cn } from "@/lib/utils/tailwindUtils";
 
 interface LoaderProps {
   className?: string;

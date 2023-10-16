@@ -1,21 +1,10 @@
 import { RocketsLocationsData } from "@/types/rockets/RocketsData.interface";
 import { RocketsFilter } from "@/types/rockets/RocketsFilter.interface";
-import { getBegginingOfDay, getDatetime, getEndOfDay } from "../timeUtils";
 import { TimeRecord } from "@/types/rockets/TimeRecord.interface";
 import { Rocket } from "@/types/rockets/Rocket.interface";
-import { RocketResponse } from "@/types/rockets/RocketsResponse.interface";
-import { isCompositeComponent } from "react-dom/test-utils";
-
-export const deserializeData = (data: RocketResponse[]) => {
-  return data.map<Rocket>((drop) => {
-    return {
-      area: drop.area,
-      location: drop.location,
-      title: drop.title,
-      timestamp: getDatetime(drop.date, drop.time),
-    };
-  });
-};
+import dayjs from "dayjs";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+dayjs.extend(isSameOrAfter);
 
 export const getLocationData = (rocketsResponse: Rocket[]) => {
   const rockets: RocketsLocationsData = {};
@@ -33,32 +22,6 @@ export const getLocationData = (rocketsResponse: Rocket[]) => {
   }
 
   return rockets;
-};
-
-export const getRocketsFilter = (rocketsResponse: Rocket[]) => {
-  const filter: RocketsFilter = [];
-  for (const { area, location } of rocketsResponse) {
-    const targetArea = filter.find((currArea) => currArea.area === area);
-    if (targetArea === undefined) {
-      filter.push({
-        area: area,
-        locations: [{ location: location, active: false }],
-      });
-      continue;
-    }
-    const targetLocation = targetArea.locations.find(
-      (currLocation) => currLocation.location === location
-    );
-    if (targetLocation === undefined) {
-      targetArea.locations.push({
-        location: location,
-        active: false,
-      });
-      continue;
-    }
-  }
-
-  return filter;
 };
 
 const getFilteredLocations = (filter: RocketsFilter) => {
@@ -92,15 +55,17 @@ export const getFilteredDrops = (filter: RocketsFilter, data: Rocket[]) => {
 export const divideHours = (drops: Rocket[], gap: number = 60) => {
   const result: TimeRecord[] = [];
 
-  let currDate = getBegginingOfDay();
-  let endOfDay = getEndOfDay();
+  let currDate = dayjs().startOf("day");
+  let endOfDay = dayjs().endOf("day");
 
-  while (currDate < endOfDay) {
+  while (currDate.isBefore(endOfDay)) {
     const currDrops = [];
-    result.push();
-    const nextDate = new Date(currDate.getTime() + gap * 60000);
+    const nextDate = dayjs(currDate).add(60, "minute");
     for (const drop of drops) {
-      if (drop.timestamp > currDate && drop.timestamp < nextDate) {
+      if (
+        drop.timestamp.isSameOrAfter(currDate) &&
+        drop.timestamp.isBefore(nextDate)
+      ) {
         currDrops.push(drop);
       }
     }

@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { cn } from "@/lib/tailwindUtils";
+import { cn } from "@/lib/utils/tailwindUtils";
 
 interface Topbar {
   className?: string;

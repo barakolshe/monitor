@@ -1,12 +1,13 @@
+import { initialRocketsFilter } from "@/lib/utils/rockets/filterUtils";
 import { RocketsFilter } from "@/types/rockets/RocketsFilter.interface";
 import React from "react";
 
 type FilterContextType = {
-  filter: RocketsFilter | null;
-  setFilter: (filter: RocketsFilter | null) => void;
+  filter: RocketsFilter;
+  setFilter: (filter: RocketsFilter) => void;
 };
 
 export const FilterContext = React.createContext<FilterContextType>({
-  filter: null,
+  filter: initialRocketsFilter,
   setFilter: (filter) => null,
 });

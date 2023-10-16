@@ -2,7 +2,7 @@
 import * as React from "react";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { Check, Minus } from "lucide-react";
-import { cn } from "@/lib/tailwindUtils";
+import { cn } from "@/lib/utils/tailwindUtils";
 import { FunctionComponent } from "react";
 
 export enum CheckboxState {

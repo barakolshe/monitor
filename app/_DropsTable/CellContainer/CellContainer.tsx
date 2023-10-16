@@ -1,4 +1,4 @@
-import { cn } from "@/lib/tailwindUtils";
+import { cn } from "@/lib/utils/tailwindUtils";
 import { FunctionComponent, ReactNode } from "react";
 
 interface CellContainerProps {

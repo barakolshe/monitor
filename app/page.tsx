@@ -7,35 +7,36 @@ import { FilterContext } from "@/context/FilterContext";
 import { RocketsFilter } from "@/types/rockets/RocketsFilter.interface";
 import {
   getFilteredDrops,
-  getRocketsFilter,
   divideHours,
-} from "@/lib/rocketsUtils/dataTransfomers";
+} from "@/lib/utils/rockets/dataTransfomers";
 import { BarChart } from "@tremor/react";
 import { Rocket } from "@/types/rockets/Rocket.interface";
 import { DropGraphData } from "@/types/rockets/DropGraphData.interface";
-import { getGraphFormat } from "@/lib/timeUtils";
 import DropsTable from "./_DropsTable/DropsTable";
 import { TimeRecord } from "@/types/rockets/TimeRecord.interface";
+import { initialRocketsFilter } from "@/lib/utils/rockets/filterUtils";
+import dayjs from "dayjs";
 
 export default function Home() {
-  const { isLoading, isError, data } = useQuery(["rocketsQuery"], () =>
-    getRocketsData()
-  );
+  const { data } = useQuery(["rocketsQuery"], () => getRocketsData());
 
   const [rocketsFilter, setRocketsFilter] =
-    React.useState<RocketsFilter | null>(null);
+    React.useState<RocketsFilter>(initialRocketsFilter);
   const [filteredDrops, setFilteredDrops] = React.useState<Rocket[] | null>(
     null
   );
   const [timeGroupedDrops, setTimeGroupsDrops] = React.useState<
     TimeRecord[] | null
   >(null);
-  const [selectedBar, setSelectedBar] = React.useState<Date | null>(null);
+  const [selectedBar, setSelectedBar] = React.useState<dayjs.Dayjs | null>(
+    null
+  );
 
   React.useEffect(() => {
-    if (data && rocketsFilter === null) {
-      setRocketsFilter(getRocketsFilter(data));
-    }
+    console.log("rocketsFilter changed");
+  }, [rocketsFilter]);
+
+  React.useEffect(() => {
     if (data && rocketsFilter !== null) {
       setFilteredDrops(getFilteredDrops(rocketsFilter, data));
     }
@@ -50,7 +51,7 @@ export default function Home() {
       return [];
     }
     const graphData = timeGroupedDrops.map<DropGraphData>((timeFrame) => ({
-      time: getGraphFormat(timeFrame.timestamp),
+      time: timeFrame.timestamp.format("HH:mm"),
       drops: timeFrame.drops.length,
     }));
 
@@ -62,11 +63,10 @@ export default function Home() {
       setSelectedBar(null);
       return;
     }
-    const currDate = new Date();
-    currDate.setHours(Number(time.split(":")[0]));
-    currDate.setMinutes(Number(time.split(":")[1]));
-    currDate.setSeconds(0);
-    currDate.setMilliseconds(0);
+    const currDate = dayjs()
+      .startOf("day")
+      .hour(Number(time.split(":")[0]))
+      .minute(Number(time.split(":")[1]));
 
     setSelectedBar(currDate);
   };
@@ -85,15 +85,14 @@ export default function Home() {
           data={timeGroupedDrops !== null ? getGraphData() : []}
           index="time"
           categories={["drops"]}
-          onValueChange={(v) => handleBarChange(v ? v.time.toString() : null)}
+          onValueChange={(v) => handleBarChange(v!.time.toString())}
         />
         {selectedBar && (
           <DropsTable
             data={
               selectedBar !== null
-                ? timeGroupedDrops!.find(
-                    (timeGroup) =>
-                      timeGroup.timestamp.getTime() === selectedBar.getTime()
+                ? timeGroupedDrops!.find((timeGroup) =>
+                    timeGroup.timestamp.isSame(selectedBar)
                   )!.drops
                 : []
             }

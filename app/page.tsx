@@ -33,12 +33,17 @@ export default function Home() {
   );
 
   React.useEffect(() => {
-    console.log("rocketsFilter changed");
-  }, [rocketsFilter]);
-
-  React.useEffect(() => {
     if (data && rocketsFilter !== null) {
-      setFilteredDrops(getFilteredDrops(rocketsFilter, data));
+      setFilteredDrops(
+        getFilteredDrops(
+          rocketsFilter,
+          {
+            start: dayjs().startOf("day"),
+            end: dayjs().endOf("day"),
+          },
+          data
+        )
+      );
     }
   }, [data, rocketsFilter]);
 

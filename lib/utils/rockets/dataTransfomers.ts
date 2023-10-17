@@ -4,7 +4,9 @@ import { TimeRecord } from "@/types/rockets/TimeRecord.interface";
 import { Rocket } from "@/types/rockets/Rocket.interface";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+import isBetween from "dayjs/plugin/isBetween";
 dayjs.extend(isSameOrAfter);
+dayjs.extend(isBetween);
 
 export const getLocationData = (rocketsResponse: Rocket[]) => {
   const rockets: RocketsLocationsData = {};
@@ -38,12 +40,22 @@ const getFilteredLocations = (filter: RocketsFilter) => {
   return locations;
 };
 
-export const getFilteredDrops = (filter: RocketsFilter, data: Rocket[]) => {
+export const getFilteredDrops = (
+  filter: RocketsFilter,
+  timeFrame: {
+    start: dayjs.Dayjs;
+    end: dayjs.Dayjs;
+  },
+  data: Rocket[]
+) => {
   const filteredLocations = getFilteredLocations(filter);
   const filteredDrops: Rocket[] = [];
 
   for (const drop of data) {
-    if (filteredLocations.includes(drop.location)) {
+    if (
+      filteredLocations.includes(drop.location) &&
+      drop.timestamp.isBetween(timeFrame.start, timeFrame.end, null, "[)")
+    ) {
       filteredDrops.push(drop);
     }
   }
@@ -61,12 +73,12 @@ export const divideHours = (drops: Rocket[], gap: number = 60) => {
   while (currDate.isBefore(endOfDay)) {
     const currDrops = [];
     const nextDate = dayjs(currDate).add(60, "minute");
-    for (const drop of drops) {
-      if (
-        drop.timestamp.isSameOrAfter(currDate) &&
-        drop.timestamp.isBefore(nextDate)
-      ) {
+    for (let i = 0; i < drops.length; i++) {
+      const drop = drops[i];
+      if (drop.timestamp.isBetween(currDate, nextDate, null, "[)")) {
         currDrops.push(drop);
+        drops.splice(i, 1);
+        i -= 1;
       }
     }
     result.push({

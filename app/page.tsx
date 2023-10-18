@@ -48,13 +48,10 @@ export default function Home() {
       return [];
     }
 
-    const start = new Date().getTime();
-    console.log("start:", start);
     const graphData = timeGroupedDrops.map<DropGraphData>((timeFrame) => ({
       time: timeFrame.timestamp.format("HH:mm"),
       drops: timeFrame.drops.length,
     }));
-    console.log("end:", new Date().getTime() - start);
 
     return graphData;
   };
@@ -79,7 +76,7 @@ export default function Home() {
         setFilter: setRocketsFilter,
       }}
     >
-      <div className="flex flex-col gap-20">
+      <div className="flex flex-col gap-20 relative">
         <Filters />
         <BarChart
           className="mx-[-50px]"

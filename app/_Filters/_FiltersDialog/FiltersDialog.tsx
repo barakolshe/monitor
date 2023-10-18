@@ -1,30 +1,18 @@
-import CheckboxAccordion, {
-  DataType as AccordionDataType,
-} from "@/components/shared/CheckboxAccordion/CheckboxAccordion";
-import { Button } from "@/components/ui/Button/Button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/Dialog/Dialog";
+import { Dialog, DialogContent } from "@/components/ui/Dialog/Dialog";
 import {
   Tabs,
   TabsList,
   TabsContent,
   TabsTrigger,
 } from "@/components/ui/Tabs/Tabs";
-import {
-  LocationFilter,
-  RocketsFilter,
-} from "@/types/rockets/RocketsFilter.interface";
+import { RocketsFilter } from "@/types/rockets/RocketsFilter.interface";
 import { DialogProps } from "@radix-ui/react-dialog";
 import React, { FunctionComponent } from "react";
 import LocationTab from "./_LocationTab/LocationTab";
 import DateTab from "./_DateTab/DateTab";
 import { FilterContext } from "@/context/FilterContext";
+
+export type TabsType = "location" | "date";
 
 interface FiltersDialogProps extends Omit<DialogProps, "onOpenChange"> {
   onOpenChange: (state: boolean) => void;
@@ -39,7 +27,6 @@ const FiltersDialog: FunctionComponent<FiltersDialogProps> = ({
   const [filter, setFilter] = React.useState<RocketsFilter>(originState);
 
   const applyChanges = () => {
-    console.log({ filter });
     setOriginState(filter);
     onOpenChange(false);
   };

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/Button/Button";
 import React, { FunctionComponent } from "react";
 import FiltersDialog, { TabsType } from "./_FiltersDialog/FiltersDialog";
 import { FilterContext } from "@/context/FilterContext";
-import LocationButtons from "../_LocationButtons/LocationButtons";
+import LocationButtons from "./_LocationButtons/LocationButtons";
 import DateButtons from "./_DateButtons/DateButtons";
 
 interface FiltersProps {}

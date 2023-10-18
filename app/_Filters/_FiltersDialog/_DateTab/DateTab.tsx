@@ -16,7 +16,7 @@ import React, { FunctionComponent } from "react";
 interface DateTabProps {
   filter: RocketsFilter;
   setFilter: (filter: RocketsFilter) => void;
-  applyChanges: (filter: RocketsFilter) => void;
+  applyChanges: () => void;
 }
 
 const DateTab: FunctionComponent<DateTabProps> = ({
@@ -48,7 +48,7 @@ const DateTab: FunctionComponent<DateTabProps> = ({
         />
       </DialogDescription>
       <DialogFooter>
-        <Button onClick={() => applyChanges(filter)}>Apply</Button>
+        <Button onClick={applyChanges}>Apply</Button>
       </DialogFooter>
     </div>
   );

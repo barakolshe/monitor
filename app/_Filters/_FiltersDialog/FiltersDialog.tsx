@@ -16,7 +16,10 @@ import {
   TabsContent,
   TabsTrigger,
 } from "@/components/ui/Tabs/Tabs";
-import { RocketsFilter } from "@/types/rockets/RocketsFilter.interface";
+import {
+  LocationFilter,
+  RocketsFilter,
+} from "@/types/rockets/RocketsFilter.interface";
 import { DialogProps } from "@radix-ui/react-dialog";
 import React, { FunctionComponent } from "react";
 import LocationTab from "./_LocationTab/LocationTab";
@@ -36,7 +39,9 @@ const FiltersDialog: FunctionComponent<FiltersDialogProps> = ({
   const [filter, setFilter] = React.useState<RocketsFilter>(originState);
 
   const applyChanges = () => {
+    console.log({ filter });
     setOriginState(filter);
+    onOpenChange(false);
   };
 
   return (
@@ -48,7 +53,11 @@ const FiltersDialog: FunctionComponent<FiltersDialogProps> = ({
             <TabsTrigger value="date">Date</TabsTrigger>
           </TabsList>
           <TabsContent value="location">
-            <LocationTab />
+            <LocationTab
+              filter={filter}
+              setFilter={setFilter}
+              applyChanges={applyChanges}
+            />
           </TabsContent>
           <TabsContent
             value="date"

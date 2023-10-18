@@ -8,11 +8,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/Dialog/Dialog";
-import { LocationFilter } from "@/types/rockets/RocketsFilter.interface";
+import {
+  LocationFilter,
+  RocketsFilter,
+} from "@/types/rockets/RocketsFilter.interface";
 import React, { FunctionComponent } from "react";
 import { FilterContext } from "@/context/FilterContext";
 
-interface LocationTabProps {}
+interface LocationTabProps {
+  filter: RocketsFilter;
+  setFilter: (filter: RocketsFilter) => void;
+  applyChanges: () => void;
+}
 
 const filterToAccordionData = (filter: LocationFilter) => {
   return filter.map((currArea) => ({
@@ -38,24 +45,19 @@ const accordionDataToFilter = (accordionData: AccordionDataType) => {
   }));
 };
 
-const LocationTab: FunctionComponent<LocationTabProps> = () => {
-  const { filter: originState, setFilter: setOriginState } =
-    React.useContext(FilterContext);
-  const [filter, setFilter] = React.useState<AccordionDataType>(
-    filterToAccordionData(originState.locationFilter)
-  );
+const LocationTab: FunctionComponent<LocationTabProps> = ({
+  filter,
+  setFilter,
+  applyChanges,
+}) => {
+  const { locationFilter } = filter;
 
-  const applyChanges = () => {
-    setOriginState({
-      ...originState,
-      locationFilter: accordionDataToFilter(filter!),
+  const handleCheckboxChange = (_locationFilter: AccordionDataType) => {
+    setFilter({
+      ...filter,
+      locationFilter: accordionDataToFilter(_locationFilter),
     });
   };
-
-  const initialState = React.useMemo(
-    () => filterToAccordionData(originState.locationFilter),
-    [originState]
-  );
 
   return (
     <div className="flex flex-col gap-4">
@@ -63,9 +65,8 @@ const LocationTab: FunctionComponent<LocationTabProps> = () => {
       <DialogHeader>Choose the locations you want to view</DialogHeader>
       <DialogDescription className="h-[60vh] overflow-y-auto app-no-scrollbar">
         <CheckboxAccordion
-          initialState={initialState}
-          data={filter}
-          setData={setFilter}
+          data={filterToAccordionData(locationFilter)}
+          setData={handleCheckboxChange}
         />
       </DialogDescription>
       <DialogFooter>

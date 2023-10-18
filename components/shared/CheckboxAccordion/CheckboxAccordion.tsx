@@ -25,13 +25,11 @@ export type DataType = {
 }[];
 
 interface CheckboxAccordionProps {
-  initialState: DataType;
   data: DataType;
   setData: (checked: DataType) => void;
 }
 
 const CheckboxAccordion: FunctionComponent<CheckboxAccordionProps> = ({
-  initialState,
   data,
   setData,
 }) => {
@@ -149,10 +147,6 @@ const CheckboxAccordion: FunctionComponent<CheckboxAccordionProps> = ({
   };
 
   let items = generateElements();
-
-  React.useEffect(() => {
-    setData(initialState);
-  }, [initialState, setData]);
 
   return <Accordion type="multiple">{items}</Accordion>;
 };

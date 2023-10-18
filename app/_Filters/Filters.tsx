@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/Separator/Separator";
 import React, { FunctionComponent } from "react";
 import FiltersDialog from "./_FiltersDialog/FiltersDialog";
 import { FilterContext } from "@/context/FilterContext";
-import { RocketsFilter } from "@/types/rockets/RocketsFilter.interface";
+import { LocationFilter } from "@/types/rockets/RocketsFilter.interface";
 import cloneDeep from "lodash.clonedeep";
 import { cn } from "@/lib/utils/tailwindUtils";
 import { PREDEFINED_FITLERS } from "@/configs/main";
@@ -25,11 +25,18 @@ const Filters: FunctionComponent<FiltersProps> = () => {
     setDialogState(true);
   };
 
+  const setLocationFilter = (locationFilter: LocationFilter) => {
+    setFilter({
+      ...filter,
+      locationFilter: locationFilter,
+    });
+  };
+
   const isFilterSelected = (predefinedFilter: PredifinedFilter) => {
     if (filter === null) {
       return false;
     }
-    for (const currArea of filter) {
+    for (const currArea of filter.locationFilter) {
       for (const currLocation of currArea.locations) {
         if (
           predefinedFilter.locations.includes(currLocation.location) &&
@@ -49,9 +56,12 @@ const Filters: FunctionComponent<FiltersProps> = () => {
   };
 
   const setPredefinedFilter = (predefinedFilter: PredifinedFilter) => {
-    const filterCopy: RocketsFilter | null = cloneDeep(filter);
-    if (filterCopy !== null) {
-      for (const area of filterCopy) {
+    const locationFilterCopy: LocationFilter | null = cloneDeep(
+      filter?.locationFilter
+    );
+
+    if (locationFilterCopy !== null) {
+      for (const area of locationFilterCopy) {
         area.locations.forEach((currLocation) => {
           if (predefinedFilter.locations.includes(currLocation.location)) {
             currLocation.active = true;
@@ -61,19 +71,21 @@ const Filters: FunctionComponent<FiltersProps> = () => {
         });
       }
     }
-    setFilter(filterCopy);
+    setLocationFilter(locationFilterCopy);
   };
 
   const resetFilter = () => {
-    const filterCopy: RocketsFilter | null = cloneDeep(filter);
-    if (filterCopy !== null) {
-      for (const area of filterCopy) {
+    const locationFilterCopy: LocationFilter | null = cloneDeep(
+      filter?.locationFilter
+    );
+    if (locationFilterCopy !== null) {
+      for (const area of locationFilterCopy) {
         area.locations.forEach((currLocation) => {
           currLocation.active = false;
         });
       }
     }
-    setFilter(filterCopy);
+    setLocationFilter(locationFilterCopy);
   };
 
   const handleFilterClick = (predefinedFilter: PredifinedFilter) => {

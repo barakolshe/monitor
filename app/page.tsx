@@ -34,20 +34,12 @@ export default function Home() {
 
   React.useEffect(() => {
     if (data && rocketsFilter !== null) {
-      setFilteredDrops(
-        getFilteredDrops(
-          rocketsFilter,
-          {
-            start: dayjs().startOf("day"),
-            end: dayjs().endOf("day"),
-          },
-          data
-        )
-      );
+      setFilteredDrops(getFilteredDrops(rocketsFilter, data));
     }
   }, [data, rocketsFilter]);
 
   React.useEffect(() => {
+    setSelectedBar(null);
     setTimeGroupsDrops(divideHours(filteredDrops ? filteredDrops : []));
   }, [filteredDrops]);
 
@@ -55,10 +47,14 @@ export default function Home() {
     if (timeGroupedDrops === null) {
       return [];
     }
+
+    const start = new Date().getTime();
+    console.log("start:", start);
     const graphData = timeGroupedDrops.map<DropGraphData>((timeFrame) => ({
       time: timeFrame.timestamp.format("HH:mm"),
       drops: timeFrame.drops.length,
     }));
+    console.log("end:", new Date().getTime() - start);
 
     return graphData;
   };
@@ -90,7 +86,7 @@ export default function Home() {
           data={timeGroupedDrops !== null ? getGraphData() : []}
           index="time"
           categories={["drops"]}
-          onValueChange={(v) => handleBarChange(v!.time.toString())}
+          onValueChange={(v) => handleBarChange(v ? v.time.toString() : null)}
         />
         {selectedBar && (
           <DropsTable
@@ -101,6 +97,7 @@ export default function Home() {
                   )!.drops
                 : []
             }
+            paginated
           />
         )}
       </div>

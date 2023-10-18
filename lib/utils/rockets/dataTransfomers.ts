@@ -1,5 +1,8 @@
 import { RocketsLocationsData } from "@/types/rockets/RocketsData.interface";
-import { RocketsFilter } from "@/types/rockets/RocketsFilter.interface";
+import {
+  LocationFilter,
+  RocketsFilter,
+} from "@/types/rockets/RocketsFilter.interface";
 import { TimeRecord } from "@/types/rockets/TimeRecord.interface";
 import { Rocket } from "@/types/rockets/Rocket.interface";
 import dayjs from "dayjs";
@@ -26,7 +29,7 @@ export const getLocationData = (rocketsResponse: Rocket[]) => {
   return rockets;
 };
 
-const getFilteredLocations = (filter: RocketsFilter) => {
+const getFilteredLocations = (filter: LocationFilter) => {
   const locations: string[] = [];
 
   for (const currArea of filter) {
@@ -40,27 +43,34 @@ const getFilteredLocations = (filter: RocketsFilter) => {
   return locations;
 };
 
-export const getFilteredDrops = (
-  filter: RocketsFilter,
-  timeFrame: {
-    start: dayjs.Dayjs;
-    end: dayjs.Dayjs;
-  },
-  data: Rocket[]
-) => {
-  const filteredLocations = getFilteredLocations(filter);
+export const getFilteredDrops = (filter: RocketsFilter, data: Rocket[]) => {
+  const filteredLocations = getFilteredLocations(filter.locationFilter);
   const filteredDrops: Rocket[] = [];
 
   for (const drop of data) {
+    const dropDayStart = drop.timestamp.startOf("day");
     if (
       filteredLocations.includes(drop.location) &&
-      drop.timestamp.isBetween(timeFrame.start, timeFrame.end, null, "[)")
+      filter.dateFilter.some((currDateFilter) =>
+        currDateFilter.isSame(dropDayStart)
+      )
     ) {
       filteredDrops.push(drop);
     }
   }
 
   return filteredDrops;
+};
+
+/*
+Get time stamp with todays date
+*/
+const toTodayDate = (timestamp: dayjs.Dayjs) => {
+  return dayjs()
+    .hour(timestamp.hour())
+    .minute(timestamp.minute())
+    .second(timestamp.second())
+    .millisecond(timestamp.millisecond());
 };
 
 // Gap in minutes
@@ -75,7 +85,9 @@ export const divideHours = (drops: Rocket[], gap: number = 60) => {
     const nextDate = dayjs(currDate).add(60, "minute");
     for (let i = 0; i < drops.length; i++) {
       const drop = drops[i];
-      if (drop.timestamp.isBetween(currDate, nextDate, null, "[)")) {
+      if (
+        toTodayDate(drop.timestamp).isBetween(currDate, nextDate, null, "[)")
+      ) {
         currDrops.push(drop);
         drops.splice(i, 1);
         i -= 1;

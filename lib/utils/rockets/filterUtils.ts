@@ -1,12 +1,22 @@
 import { LOCATIONS } from "@/configs/consts";
-import { RocketsFilter } from "@/types/rockets/RocketsFilter.interface";
+import {
+  DateFilter,
+  LocationFilter,
+  RocketsFilter,
+} from "@/types/rockets/RocketsFilter.interface";
+import dayjs from "dayjs";
 
-export const initialRocketsFilter: RocketsFilter = LOCATIONS.map(
-  (currArea) => ({
-    area: currArea.area,
-    locations: currArea.locations.map((currLocation) => ({
-      location: currLocation,
-      active: false,
-    })),
-  })
-);
+const locationFilter: LocationFilter = LOCATIONS.map((currArea) => ({
+  area: currArea.area,
+  locations: currArea.locations.map((currLocation) => ({
+    location: currLocation,
+    active: false,
+  })),
+}));
+
+const dateFilter: DateFilter = [dayjs().startOf("day")];
+
+export const initialRocketsFilter: RocketsFilter = {
+  locationFilter: locationFilter,
+  dateFilter: dateFilter,
+};

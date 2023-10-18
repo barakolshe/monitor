@@ -9,9 +9,13 @@ import CellContainer from "./CellContainer/CellContainer";
 
 interface DropsTableProps {
   data: Rocket[];
+  paginated: boolean;
 }
 
-const DropsTable: FunctionComponent<DropsTableProps> = ({ data }) => {
+const DropsTable: FunctionComponent<DropsTableProps> = ({
+  data,
+  paginated,
+}) => {
   const columns: ColumnDef<Rocket>[] = [
     {
       id: "date",
@@ -99,7 +103,7 @@ const DropsTable: FunctionComponent<DropsTableProps> = ({ data }) => {
       cell: ({ row }) => <CellContainer>{row.getValue("title")}</CellContainer>,
     },
   ];
-  return <DataTable columns={columns} data={data}></DataTable>;
+  return <DataTable columns={columns} data={data} paginated></DataTable>;
 };
 
 export default DropsTable;

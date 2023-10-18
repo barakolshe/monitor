@@ -6,32 +6,34 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/Dialog/Dialog";
-import { DateFilter } from "@/types/rockets/RocketsFilter.interface";
+import {
+  DateFilter,
+  RocketsFilter,
+} from "@/types/rockets/RocketsFilter.interface";
 import dayjs from "dayjs";
 import React, { FunctionComponent } from "react";
-import { FilterContext } from "@/context/FilterContext";
 
-interface DateTabProps {}
+interface DateTabProps {
+  filter: RocketsFilter;
+  setFilter: (filter: RocketsFilter) => void;
+  applyChanges: (filter: RocketsFilter) => void;
+}
 
-const DateTab: FunctionComponent<DateTabProps> = () => {
-  const { filter: originState, setFilter: setOriginState } =
-    React.useContext(FilterContext);
-  const [filter, setFilter] = React.useState<DateFilter>(
-    originState.dateFilter
-  );
-
-  const applyChanges = () => {
-    setOriginState({
-      ...originState,
-      dateFilter: filter,
+const DateTab: FunctionComponent<DateTabProps> = ({
+  filter,
+  setFilter,
+  applyChanges,
+}) => {
+  const transformDates = (nativeDates: Date[] | undefined) => {
+    setFilter({
+      ...filter,
+      dateFilter: nativeDates
+        ? nativeDates.map((date) => dayjs(date).startOf("day"))
+        : [],
     });
   };
 
-  const transformDates = (nativeDates: Date[] | undefined) => {
-    setFilter(
-      nativeDates ? nativeDates.map((date) => dayjs(date).startOf("day")) : []
-    );
-  };
+  const { dateFilter } = filter;
 
   return (
     <div className="flex flex-col gap-4">
@@ -40,13 +42,13 @@ const DateTab: FunctionComponent<DateTabProps> = () => {
       <DialogDescription className="h-[350px] relative">
         <Calendar
           mode="multiple"
-          selected={filter?.map((date) => date.toDate())}
+          selected={dateFilter.map((date) => date.toDate())}
           onSelect={transformDates}
           className="rounded-md border w-auto absolute left-[50%] top-[10px] translate-x-[-50%]"
         />
       </DialogDescription>
       <DialogFooter>
-        <Button onClick={applyChanges}>Apply</Button>
+        <Button onClick={() => applyChanges(filter)}>Apply</Button>
       </DialogFooter>
     </div>
   );

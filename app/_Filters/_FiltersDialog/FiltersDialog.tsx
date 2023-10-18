@@ -21,6 +21,7 @@ import { DialogProps } from "@radix-ui/react-dialog";
 import React, { FunctionComponent } from "react";
 import LocationTab from "./_LocationTab/LocationTab";
 import DateTab from "./_DateTab/DateTab";
+import { FilterContext } from "@/context/FilterContext";
 
 interface FiltersDialogProps extends Omit<DialogProps, "onOpenChange"> {
   onOpenChange: (state: boolean) => void;
@@ -30,6 +31,14 @@ const FiltersDialog: FunctionComponent<FiltersDialogProps> = ({
   onOpenChange,
   ...props
 }) => {
+  const { filter: originState, setFilter: setOriginState } =
+    React.useContext(FilterContext);
+  const [filter, setFilter] = React.useState<RocketsFilter>(originState);
+
+  const applyChanges = () => {
+    setOriginState(filter);
+  };
+
   return (
     <Dialog onOpenChange={onOpenChange} {...props}>
       <DialogContent>
@@ -45,7 +54,11 @@ const FiltersDialog: FunctionComponent<FiltersDialogProps> = ({
             value="date"
             className="flex flex-col justify-center items-center"
           >
-            <DateTab />
+            <DateTab
+              filter={filter}
+              setFilter={setFilter}
+              applyChanges={applyChanges}
+            />
           </TabsContent>
         </Tabs>
       </DialogContent>

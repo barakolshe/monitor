@@ -36,16 +36,18 @@ const DateTab: FunctionComponent<DateTabProps> = ({
   const { dateFilter } = filter;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 w-full">
       <DialogTitle>Filters</DialogTitle>
       <DialogHeader>Choose the dates you want to view</DialogHeader>
-      <DialogDescription className="h-[350px] relative">
-        <Calendar
-          mode="multiple"
-          selected={dateFilter.map((date) => date.toDate())}
-          onSelect={transformDates}
-          className="rounded-md border w-auto absolute left-[50%] top-[10px] translate-x-[-50%]"
-        />
+      <DialogDescription className="relative">
+        <div className="flex flex-row justify-center items-center">
+          <Calendar
+            mode="multiple"
+            selected={dateFilter.map((date) => date.toDate())}
+            onSelect={transformDates}
+            className="rounded-md border w-auto"
+          />
+        </div>
       </DialogDescription>
       <DialogFooter>
         <Button onClick={applyChanges}>Apply</Button>

@@ -44,6 +44,10 @@ const FiltersDialog: FunctionComponent<FiltersDialogProps> = ({
     onOpenChange(false);
   };
 
+  React.useEffect(() => {
+    setFilter(originState);
+  }, [originState]);
+
   return (
     <Dialog onOpenChange={onOpenChange} {...props}>
       <DialogContent>

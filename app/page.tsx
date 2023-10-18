@@ -86,7 +86,9 @@ export default function Home() {
           data={timeGroupedDrops !== null ? getGraphData() : []}
           index="time"
           categories={["drops"]}
-          onValueChange={(v) => handleBarChange(v ? v.time.toString() : null)}
+          onValueChange={(v) =>
+            handleBarChange(v && v.time ? v.time.toString() : null)
+          }
         />
         {selectedBar && (
           <DropsTable

@@ -36,7 +36,7 @@ const DateTab: FunctionComponent<DateTabProps> = () => {
   return (
     <div className="flex flex-col gap-4">
       <DialogTitle>Filters</DialogTitle>
-      <DialogHeader>Choose the locations you want to view</DialogHeader>
+      <DialogHeader>Choose the dates you want to view</DialogHeader>
       <DialogDescription className="h-[350px] relative">
         <Calendar
           mode="multiple"

@@ -62,7 +62,6 @@ const getFilteredLocationByLocationFilter = (
 const getFilteredLocationByDistanceFilter = (
   distanceFilter: DistanceFilter[]
 ) => {
-  console.log("getting distance");
   let locations: LocationDistance[] = LOCATION_DISTANCES;
   const approvedLocations: LocationDistance[] = [];
 
@@ -116,30 +115,31 @@ const toTodayDate = (timestamp: dayjs.Dayjs) => {
 
 // Gap in minutes
 export const divideHours = (drops: Rocket[], gap: number = 60) => {
-  const result: TimeRecord[] = [];
+  const result: {
+    [key: number]: Rocket[];
+  } = {};
 
-  let currDate = dayjs().startOf("day");
   let endOfDay = dayjs().endOf("day");
-
-  while (currDate.isBefore(endOfDay)) {
-    const currDrops = [];
-    const nextDate = dayjs(currDate).add(60, "minute");
-    for (let i = 0; i < drops.length; i++) {
-      const drop = drops[i];
-      if (
-        toTodayDate(drop.timestamp).isBetween(currDate, nextDate, null, "[)")
-      ) {
-        currDrops.push(drop);
-        drops.splice(i, 1);
-        i -= 1;
-      }
-    }
-    result.push({
-      timestamp: currDate,
-      drops: currDrops,
-    });
-    currDate = nextDate;
+  for (
+    let currDate = dayjs().startOf("day");
+    currDate.isBefore(endOfDay);
+    currDate = currDate.add(60, "minute")
+  ) {
+    result[currDate.valueOf()] = [];
   }
 
-  return result;
+  for (let i = 0; i < drops.length; i++) {
+    // N
+    const drop = drops[i];
+    const targetDate = toTodayDate(drop.timestamp)
+      .minute(0)
+      .second(0)
+      .millisecond(0);
+    result[targetDate.valueOf()].push(drop);
+  }
+
+  return Object.entries(result).map(([timestamp, drops]) => ({
+    timestamp: dayjs(Number(timestamp)),
+    drops: drops,
+  }));
 };

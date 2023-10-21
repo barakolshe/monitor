@@ -47,7 +47,7 @@ const LocationButtons: FunctionComponent<LocationButtonsProps> = ({
   };
 
   const setPredefinedFilter = (predefinedFilter: PredefinedLocationFilter) => {
-    const locationFilterCopy: LocationFilter | null = cloneDeep(
+    const locationFilterCopy: LocationFilter[] | null = cloneDeep(
       filter?.locationFilter
     );
 
@@ -75,7 +75,7 @@ const LocationButtons: FunctionComponent<LocationButtonsProps> = ({
   };
 
   const resetFilter = () => {
-    const locationFilterCopy: LocationFilter | null = cloneDeep(
+    const locationFilterCopy: LocationFilter[] | null = cloneDeep(
       filter?.locationFilter
     );
     if (locationFilterCopy !== null) {

@@ -11,6 +11,10 @@ import React, { FunctionComponent } from "react";
 import LocationTab from "./_LocationTab/LocationTab";
 import DateTab from "./_DateTab/DateTab";
 import { FilterContext } from "@/context/FilterContext";
+import DistanceTab from "./_DistanceTab/DistanceTab";
+import { X } from "lucide-react";
+import { initialDistanceFilter } from "@/lib/utils/rockets/filterUtils";
+import isEqual from "lodash.isequal";
 
 export type TabsType = "location" | "date";
 
@@ -40,7 +44,22 @@ const FiltersDialog: FunctionComponent<FiltersDialogProps> = ({
       <DialogContent>
         <Tabs defaultValue="location">
           <TabsList>
-            <TabsTrigger value="location">Location</TabsTrigger>
+            <TabsTrigger value="location">
+              <div className="flex flex-row gap-1 justify-center items-center">
+                Location
+                {!isEqual(filter.distanceFilter, initialDistanceFilter) && (
+                  <X className="h-4 w-4 mt-[3px] text-red-500" />
+                )}
+              </div>
+            </TabsTrigger>
+            <TabsTrigger value="distance">
+              <div className="flex flex-row gap-1 justify-center items-center">
+                Distance
+                {isEqual(filter.distanceFilter, initialDistanceFilter) && (
+                  <X className="h-4 w-4 mt-[3px] text-red-500" />
+                )}
+              </div>
+            </TabsTrigger>
             <TabsTrigger value="date">Date</TabsTrigger>
           </TabsList>
           <TabsContent value="location">
@@ -55,6 +74,16 @@ const FiltersDialog: FunctionComponent<FiltersDialogProps> = ({
             className="flex flex-col justify-center items-center"
           >
             <DateTab
+              filter={filter}
+              setFilter={setFilter}
+              applyChanges={applyChanges}
+            />
+          </TabsContent>
+          <TabsContent
+            value="distance"
+            className="flex flex-col justify-center items-center overflow-x-visible"
+          >
+            <DistanceTab
               filter={filter}
               setFilter={setFilter}
               applyChanges={applyChanges}

@@ -13,7 +13,7 @@ export enum CheckboxState {
 
 type CheckboxProps = {
   className?: string;
-  checked?: CheckboxState;
+  checked?: CheckboxState | boolean;
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   id?: string;
 };
@@ -23,21 +23,48 @@ const Checkbox: FunctionComponent<CheckboxProps> = ({
   checked,
   ...props
 }) => {
+  const getCheckboxProp = () => {
+    if (typeof checked === "boolean" || checked === undefined) {
+      return checked;
+    }
+    return checked === CheckboxState.Unchecked ? false : true;
+  };
+
+  const getCheckboxIndicator = () => {
+    if (typeof checked === "boolean" || checked === undefined) {
+      return (
+        <CheckboxPrimitive.Indicator
+          className={cn("flex items-center justify-center text-current")}
+        >
+          <Check className="h-4 w-4" />
+        </CheckboxPrimitive.Indicator>
+      );
+    }
+    let indicator: React.ReactNode | null = null;
+    if (checked === CheckboxState.Checked) {
+      indicator = <Check className="h-4 w-4" />;
+    } else if (checked === CheckboxState.SemiChecked) {
+      indicator = <Minus className="h-4 w-4" />;
+    }
+    return indicator !== null ? (
+      <CheckboxPrimitive.Indicator
+        className={cn("flex items-center justify-center text-current")}
+      >
+        {indicator}
+      </CheckboxPrimitive.Indicator>
+    ) : null;
+  };
+
   return (
     <CheckboxPrimitive.Root
       className={cn(
         "peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
         className
       )}
-      checked={checked === CheckboxState.Unchecked ? false : true}
+      checked={getCheckboxProp()}
       {...props}
     >
-      <CheckboxPrimitive.Indicator
-        className={cn("flex items-center justify-center text-current")}
-      >
-        {checked === CheckboxState.Checked && <Check className="h-4 w-4" />}
-        {checked === CheckboxState.SemiChecked && <Minus className="h-4 w-4" />}
-      </CheckboxPrimitive.Indicator>
+      {getCheckboxIndicator()}
     </CheckboxPrimitive.Root>
   );
 };

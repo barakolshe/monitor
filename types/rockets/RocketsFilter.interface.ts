@@ -6,11 +6,17 @@ export type LocationFilter = {
     location: string;
     active: boolean;
   }[];
-}[];
+};
 
-export type DateFilter = dayjs.Dayjs[];
+export type DistanceFilter = {
+  from: string;
+  distance: number;
+};
+
+export type DateFilter = dayjs.Dayjs;
 
 export type RocketsFilter = {
-  locationFilter: LocationFilter;
-  dateFilter: DateFilter;
+  locationFilter: LocationFilter[];
+  dateFilter: DateFilter[];
+  distanceFilter: DistanceFilter[];
 };

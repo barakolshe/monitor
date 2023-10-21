@@ -8,12 +8,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/Dialog/Dialog";
+import { initialDistanceFilter } from "@/lib/utils/rockets/filterUtils";
 import {
   LocationFilter,
   RocketsFilter,
 } from "@/types/rockets/RocketsFilter.interface";
 import React, { FunctionComponent } from "react";
-import { FilterContext } from "@/context/FilterContext";
 
 interface LocationTabProps {
   filter: RocketsFilter;
@@ -21,7 +21,7 @@ interface LocationTabProps {
   applyChanges: () => void;
 }
 
-const filterToAccordionData = (filter: LocationFilter) => {
+const filterToAccordionData = (filter: LocationFilter[]) => {
   return filter.map((currArea) => ({
     id: currArea.area,
     label: currArea.area,
@@ -55,6 +55,7 @@ const LocationTab: FunctionComponent<LocationTabProps> = ({
   const handleCheckboxChange = (_locationFilter: AccordionDataType) => {
     setFilter({
       ...filter,
+      distanceFilter: initialDistanceFilter,
       locationFilter: accordionDataToFilter(_locationFilter),
     });
   };

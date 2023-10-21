@@ -1,5 +1,6 @@
 import { RocketsLocationsData } from "@/types/rockets/RocketsData.interface";
 import {
+  DistanceFilter,
   LocationFilter,
   RocketsFilter,
 } from "@/types/rockets/RocketsFilter.interface";
@@ -8,6 +9,10 @@ import { Rocket } from "@/types/rockets/Rocket.interface";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isBetween from "dayjs/plugin/isBetween";
+import isEqual from "lodash.isequal";
+import { initialDistanceFilter } from "./filterUtils";
+import { LocationDistance } from "@/types/locations/LocationDistance.interface";
+import { LOCATION_DISTANCES } from "@/configs/locationDistances";
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isBetween);
 
@@ -29,10 +34,21 @@ export const getLocationData = (rocketsResponse: Rocket[]) => {
   return rockets;
 };
 
-const getFilteredLocations = (filter: LocationFilter) => {
+const getFilteredLocations = (
+  locationFilter: LocationFilter[],
+  distanceFilter: DistanceFilter[]
+) => {
+  return isEqual(distanceFilter, initialDistanceFilter)
+    ? getFilteredLocationByLocationFilter(locationFilter)
+    : getFilteredLocationByDistanceFilter(distanceFilter);
+};
+
+const getFilteredLocationByLocationFilter = (
+  locationFilter: LocationFilter[]
+) => {
   const locations: string[] = [];
 
-  for (const currArea of filter) {
+  for (const currArea of locationFilter) {
     locations.push(
       ...currArea.locations
         .filter((currLocation) => currLocation.active)
@@ -43,8 +59,33 @@ const getFilteredLocations = (filter: LocationFilter) => {
   return locations;
 };
 
+const getFilteredLocationByDistanceFilter = (
+  distanceFilter: DistanceFilter[]
+) => {
+  console.log("getting distance");
+  let locations: LocationDistance[] = LOCATION_DISTANCES;
+  const approvedLocations: LocationDistance[] = [];
+
+  for (const { from, distance } of distanceFilter) {
+    for (const currLocation of locations) {
+      const targetDistance = currLocation.distances.find(
+        (currDistance) => currDistance.from === from
+      )?.distance;
+      if (targetDistance !== undefined && targetDistance <= distance) {
+        approvedLocations.push(currLocation);
+      }
+    }
+    locations = approvedLocations;
+  }
+
+  return locations.map((currLocation) => currLocation.location);
+};
+
 export const getFilteredDrops = (filter: RocketsFilter, data: Rocket[]) => {
-  const filteredLocations = getFilteredLocations(filter.locationFilter);
+  const filteredLocations = getFilteredLocations(
+    filter.locationFilter,
+    filter.distanceFilter
+  );
   const filteredDrops: Rocket[] = [];
 
   for (const drop of data) {

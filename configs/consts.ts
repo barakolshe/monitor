@@ -1,3 +1,5 @@
+import { LocationDistance } from "@/types/locations/LocationDistance.interface";
+
 export const LOCATIONS = [
   {
     area: "דן",
@@ -830,5 +832,20 @@ export const LOCATIONS = [
   {
     area: "מרכז הגליל",
     locations: ["רקפת", "כפר מנדא", "מרכז אזורי משגב", "אעבלין", "שפרעם"],
+  },
+];
+
+export const DISTANCE_FILTER_OPTIONS = [
+  {
+    from: "Gaza",
+    maxDistance: 400,
+  },
+  {
+    from: "Lebanon",
+    maxDistance: 400,
+  },
+  {
+    from: "Syria",
+    maxDistance: 400,
   },
 ];

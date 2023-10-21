@@ -1,21 +1,16 @@
 import { Button } from "@/components/ui/Button/Button";
 import { FunctionComponent } from "react";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 import DataTable from "@/components/shared/DataTable/DataTable";
 import { Rocket } from "@/types/rockets/Rocket.interface";
-import { ColumnDef, Row } from "@tanstack/react-table";
-import { getDate, getTime } from "@/lib/utils/timeUtils";
+import { ColumnDef } from "@tanstack/react-table";
 import CellContainer from "./CellContainer/CellContainer";
 
 interface DropsTableProps {
   data: Rocket[];
-  paginated: boolean;
 }
 
-const DropsTable: FunctionComponent<DropsTableProps> = ({
-  data,
-  paginated,
-}) => {
+const DropsTable: FunctionComponent<DropsTableProps> = ({ data }) => {
   const columns: ColumnDef<Rocket>[] = [
     {
       id: "date",
@@ -103,7 +98,7 @@ const DropsTable: FunctionComponent<DropsTableProps> = ({
       cell: ({ row }) => <CellContainer>{row.getValue("title")}</CellContainer>,
     },
   ];
-  return <DataTable columns={columns} data={data} paginated></DataTable>;
+  return <DataTable columns={columns} data={data} pagination={15}></DataTable>;
 };
 
 export default DropsTable;

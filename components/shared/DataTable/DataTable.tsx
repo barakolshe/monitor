@@ -24,13 +24,13 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  paginated: boolean;
+  pagination?: number;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  paginated = false,
+  pagination,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const table = useReactTable({
@@ -40,15 +40,18 @@ export function DataTable<TData, TValue>({
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: paginated ? getPaginationRowModel() : undefined,
+    getPaginationRowModel: pagination ? getPaginationRowModel() : undefined,
     state: {
       sorting,
     },
     initialState: {
-      pagination: {
-        pageSize: 40,
-        pageIndex: 0,
-      },
+      pagination:
+        pagination !== undefined
+          ? {
+              pageSize: pagination,
+              pageIndex: 0,
+            }
+          : {},
     },
   });
 
@@ -81,7 +84,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="flex flex-col gap-4">
-      {paginated && paginationControls}
+      {pagination && paginationControls}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -135,7 +138,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      {paginated && paginationControls}
+      {pagination && paginationControls}
     </div>
   );
 }
